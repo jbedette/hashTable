@@ -1,0 +1,10 @@
+11/5    - get hash funcs working totatty
+            -makeHash, pump out a key
+            -sortHash, determine where hash will be
+            
+            -possibly make the creation table funcs
+            -think i need to use **
+            -make show funcs for testing ease
+11/6    - make delete/remove funcs 
+11/7    - pay/edit funcs
+11/8    - cctype data reading types// maybe make this earlier
