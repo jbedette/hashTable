@@ -8,3 +8,12 @@
 11/6    - make delete/remove funcs 
 11/7    - pay/edit funcs
 11/8    - cctype data reading types// maybe make this earlier
+
+today 11/7 - i think i've got the adding workin
+so the array of companies is fucked
+    2 options
+        1, never deal with !head
+        2, fuck i don't know, spend another 3 hours on trying to make the * ->[] work
+            god fucking damnit fuck fuck fuck shit
+        
+        i kinda suspect the array is populating correctly
