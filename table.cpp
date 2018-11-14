@@ -4,22 +4,26 @@
 
 
 table::table(){
-    cerr << "\ncreating table\n";
+    //cerr << "\ncreating table\n";
     companies = NULL;
     size = 0;
 }
 table::~table(){
+    /*
+    for(int i = 0; i < size; ++i){
+        delete companies[i];
+    }
+    */
     delete companies;
 }
 //need to make companies values NULL
 int table::init(int tblSize){
+    if(!tblSize)return 0;
     int flag = 0;
     size = tblSize;
     companies = new company * [size];
     for( int i = 0; i < size; ++i){
         companies[i] = NULL;
-        if(!companies[i])cerr   << "\nCompanies " << i << " is null: "
-                                        << companies[i];
     }
     return flag;
 }
@@ -33,33 +37,28 @@ bool table::isEmpty(){
 }
 
 int table::addComp(company * temp){
-    //cerr << "\ntable.addComp";
     
     int count = 0;
     long int key = makeHash(temp->name,size);
     temp->key = key;
     int index = sortHash(key,size);
     if(!companies[index]){
-        cerr << "!head add";
-        cerr << "\nHead index: " << index;
         companies[index] = new company;
         companies[index] = temp;
         ++count;
-        //cerr << "\nHead->disp: " << companies[index]->disp();
         return 0;
     }else{
-        cerr << "\nCompany[ind]: "<<companies[index];
         count += recAdd(companies[index]->next,temp);
     }
     return count;
 }
 int table::recAdd(company * & head, company * temp){
-    //cerr << "\nTable.recAdd";
-    if(head) return recAdd(head->next, temp)+1;//if head exists, move on
+    if(head){
+        return recAdd(head->next, temp)+1;//if head exists, move on
+    }
     head = new company;
-    cerr << " added";
-    head->addValue(temp);
-    return 10000;
+    head = temp;
+   return 10000;
 }
 bool table::pay(char term[],float paym){
     return recPay(companies[sortHash(makeHash(term,size),size)],term, paym);
@@ -79,9 +78,7 @@ bool table::recPay(company * & head, char term[], float paym){
     return succ;
 }
 int table::dispAll(){
-    cerr << "\ncompanies len: " << (sizeof(companies)/sizeof(companies[0]));
-    cerr <<"\ndispAll\n";
-    //companies[0]->disp();
+    cerr << "\nDispAll";
     int count  = 0;
     for(int i = 0; i < size; ++i){
        count += recDispAll(companies[i]);
@@ -89,10 +86,50 @@ int table::dispAll(){
     return count;
 }
 int table::recDispAll(company * head){
-    cerr <<"\nRecdispAll\n";
     if(!head) return 0;
     head->disp();
     return recDispAll(head->next) + 1;
+}
+bool table::disp(char term[]){
+   int i = sortHash(makeHash(term,size),size); 
+   if(!companies[i]) return false;
+   int succ = 0;
+   succ += recDisp(companies[i],term);
+   return (succ) ? true : false;
+}
+int table::recDisp(company * head,char term[]){
+    if(!head) return 0;
+    if(!strcmp(head->name, term))return head->disp();
+    else return recDisp(head->next,term) + 0;
+}
+int table::del(char term[]){
+    int i = sortHash(makeHash(term,size),size);
+    company * head = companies[i];
+    if(!head) return 0;
+    if(!head->next){
+        delete companies[i];
+        companies[i] = NULL;
+        return 1;
+    }
+    int succ = 0;
+    succ += recDel(companies[i]->next,companies[i],term);
+    return succ;
+}
+int table::recDel(company * & head, company * & prev,char term[]){
+    if(!head) return 0; 
+    int flag = 0;
+    if(!strcmp(head->name,term)){
+        //ll is being broken/changes not saved
+        cerr << "\nprev->n: " << prev->next->name;
+        prev->next = head->next;
+        cerr << "\nprev->n: " << prev->next->name;
+        delete head; 
+        head = NULL;
+        ++flag;
+    }else{
+        recDel(head->next,head,term);
+    }
+    return flag;
 }
 
 

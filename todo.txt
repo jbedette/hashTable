@@ -17,3 +17,18 @@ so the array of companies is fucked
             god fucking damnit fuck fuck fuck shit
         
         i kinda suspect the array is populating correctly
+
+11/14
+    priority : - low = mid + high
+    +find memory leaks
+    =make single disp show most recent
+    =disp from company moved out of company class and into client
+    -menu
+        why do i need to enter values twice?
+    +comment
+    -keep all funcs under 30
+    =using every return
+    ++del isn't working
+        resetting of ->next isn't working
+    -only use #include where needed
+    -errors don't really work

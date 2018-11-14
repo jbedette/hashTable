@@ -21,9 +21,6 @@ class company{
         ~company();
         int addValue(company * toAdd);
         int disp(); 
-        //if class needs to be private
-        ////because company is a class, need func to retrieve name
-        int assignKey(long int inpkey);
         char * getName(company * temp);
         long int getKey();
         //
@@ -33,7 +30,7 @@ class company{
         char * addr;//2
         long int phon;//3
         int acct;//4
-        int lastDate;//5
+        char * lastDate;//5
         float lastPay;//6
         float currDue;//7
         bool paid;
@@ -45,17 +42,20 @@ class table{
         ~table();
         int init(int sizeArr);
         int addComp(company * temp);
-        int recAdd(company * & head, company * temp);
         int dispAll();
-        int recDispAll(company * head);
-        int findHash();
-        long int makeHash(char name[], int max);
-        long int sortHash(long int hash, int arrLen);
-        int setHashBrkPts();
         bool isEmpty();
         bool pay(char term[], float paym);
-        bool recPay(company * & head, char term[], float paym);
+        int del(char term[]);
+        bool disp(char term[]);
+        //hash stuff
+        long int makeHash(char name[], int max);
+        long int sortHash(long int hash, int arrLen);
     private:
+        int recAdd(company * & head, company * temp);
+        bool recPay(company * & head, char term[], float paym);
+        int recDel(company * & head, company * & prev, char term[]);
+        int recDisp(company * head, char term[]);
+        int recDispAll(company * head);
         company ** companies;
         int size;
 };
@@ -69,6 +69,10 @@ class client{
         int populate();
         void dispAll();
         void pay();
+        void del();
+        void add();
+        void disp();
+        void menu();
     private:
         table * myTable;
         company * temp;
