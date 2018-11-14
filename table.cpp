@@ -1,8 +1,10 @@
 #include "table.h"
+#include <typeinfo>
 
 
 
 table::table(){
+    cerr << "\ncreating table\n";
     companies = NULL;
     size = 0;
 }
@@ -13,55 +15,77 @@ table::~table(){
 int table::init(int tblSize){
     int flag = 0;
     size = tblSize;
-    companies = new company[size];
-    if(!companies[0].next) cerr << "\nWow i'm drunk/!nextnull\n";
-    /*
+    companies = new company * [size];
     for( int i = 0; i < size; ++i){
-        companies + i = NULL;
+        companies[i] = NULL;
+        if(!companies[i])cerr   << "\nCompanies " << i << " is null: "
+                                        << companies[i];
     }
-    */
     return flag;
 }
-bool table::isEmpty(company * head){
-    return ( head->name && head->key && head->addr ) ? true : false;
-}
-int table::addComp(company * temp){
-    if(!temp){
-        cerr << "\n!temp\n";
-        return 0;
+//need to  check if i've made anything
+bool table::isEmpty(){
+    int notNull = 0;
+    for(int i = 0; i < size; ++i){
+        if (companies[i]) ++notNull;
     }
+    return (notNull) ? false : true;
+}
+
+int table::addComp(company * temp){
+    //cerr << "\ntable.addComp";
+    
+    int count = 0;
     long int key = makeHash(temp->name,size);
     temp->key = key;
     int index = sortHash(key,size);
-    company * head = companies + index ;
-    if(!head){
-        cerr << "\n!head\n";
+    if(!companies[index]){
+        cerr << "!head add";
+        cerr << "\nHead index: " << index;
+        companies[index] = new company;
+        companies[index] = temp;
+        ++count;
+        //cerr << "\nHead->disp: " << companies[index]->disp();
         return 0;
-    }
-    if(isEmpty(head)){
-        cerr << "\nisEmpty = true\n";
-        if(head->addValue(temp)== 7) cout << "\nSuccessfully Added\n";
     }else{
-        cerr << "\nisEmpty = false\n";
-        recAdd(head->next,temp);
+        cerr << "\nCompany[ind]: "<<companies[index];
+        count += recAdd(companies[index]->next,temp);
     }
-    return 0;
+    return count;
 }
 int table::recAdd(company * & head, company * temp){
+    //cerr << "\nTable.recAdd";
     if(head) return recAdd(head->next, temp)+1;//if head exists, move on
     head = new company;
+    cerr << " added";
     head->addValue(temp);
     return 10000;
 }
-int table::dispAll(){
-    cerr <<"\ndispAll\n";
-    int count  = 0;
-    companies[0].disp();
-    /*
-    for(int i = 0; i < size; ++i){
-       count += recDispAll(companies+i);
+bool table::pay(char term[],float paym){
+    return recPay(companies[sortHash(makeHash(term,size),size)],term, paym);
+}
+bool table::recPay(company * & head, char term[], float paym){
+    if(!head) return false;
+    bool succ = false;
+    if(!strcmp(head->name,term)){
+        head->disp();
+        head->currDue -= paym;
+        if(head->currDue <= 0) head->paid = true;
+        succ = true;
+        head->disp();
+    }else{
+        succ = recPay(head->next, term, paym);
     }
-    */
+    return succ;
+}
+int table::dispAll(){
+    cerr << "\ncompanies len: " << (sizeof(companies)/sizeof(companies[0]));
+    cerr <<"\ndispAll\n";
+    //companies[0]->disp();
+    int count  = 0;
+    for(int i = 0; i < size; ++i){
+       count += recDispAll(companies[i]);
+    }
     return count;
 }
 int table::recDispAll(company * head){
@@ -70,9 +94,12 @@ int table::recDispAll(company * head){
     head->disp();
     return recDispAll(head->next) + 1;
 }
+
+
 //hash browns
 ////make a hash given an arr of chars
-long int table::makeHash(char name[], int max){    long int hash = 0;
+long int table::makeHash(char name[], int max){    
+    long int hash = 0;
     int len = strlen(name);
     int powOfTen = 1;
     for(int i = 0; i < len; ++i){
@@ -88,12 +115,3 @@ long int table::sortHash(long int hash, int arrLen){
     return hash % arrLen;
 }
 //end of hashbrowns
-/*
-//I dont think i need this
-int table::setHaskBrkPts(int long maxHash){
-    hashBrkPts = new brkpt[size];
-    brkpt[0]->min = 0;
-    brkpt[0]->max = maxHash/size;
-
-}
-*/

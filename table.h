@@ -11,10 +11,6 @@ using namespace std;
  * date of last payment, business
  */
 
-struct brkpt{
-    long int min;
-    long int max;
-};
 //made my company node a totally public class
 //struct is nice, but with all these assigned values
 //I wanted the cleanliness of a class's destructor
@@ -35,7 +31,7 @@ class company{
         long int key;
         char * name;//1
         char * addr;//2
-        int phon;//3
+        long int phon;//3
         int acct;//4
         int lastDate;//5
         float lastPay;//6
@@ -56,11 +52,12 @@ class table{
         long int makeHash(char name[], int max);
         long int sortHash(long int hash, int arrLen);
         int setHashBrkPts();
-        bool isEmpty(company * head);
+        bool isEmpty();
+        bool pay(char term[], float paym);
+        bool recPay(company * & head, char term[], float paym);
     private:
+        company ** companies;
         int size;
-        brkpt * hashBrkPts;
-        company * companies;
 };
 
 class client{
@@ -71,14 +68,11 @@ class client{
         int init();//create new arr of companies
         int populate();
         void dispAll();
+        void pay();
     private:
         table * myTable;
         company * temp;
-        //table * smlTable;
-        //table * lgTable;
 };
-//utitlity
-int numExtract(char nums[]);
 
 
 

@@ -20,74 +20,72 @@ client::~client(){
 //int client::init(char inpFile[]){
 int client::init(){
     int flag = 0;
-    int tblSize = 0;
+    int tblSize = 1;
     cout << "\nHow Big do you want your table: ";
     cin >> tblSize;
     cin.clear();
     myTable = new table;
-    //while there are new lines, keep firing table init
-    //maybe a second populate functiong
     myTable->init(tblSize);
-    populate();
+    cout << "\nNumber of items added: " << populate();
     //populate(inpFile,tblSize);
     return flag;
 }
-//need to add eof stop
 //int client::populate(char inpFile[],int tblSize){
 int client::populate(){
-    company * temp = new company;
-    int flag = 0;
+    cerr << "\nclient.populate\n";
+    company * temp;
+    int count = 0;
     ifstream fin;
-    fin.open("data.txt");
+    fin.open("data2.txt");
     //fin.open(inpFile);
-    if(!fin) return flag;
-    while(fin && !fin.eof()){
-        for(int i = 0; i < 10;++i){
+    if(!fin) return count;
+    int index = 0;
+    while(fin && fin >> index && !fin.eof()){
+        fin.ignore(100,'|');
+        temp = new company;
+        //cerr <<"\nTemp: "<< temp;
+        temp->addr = new char[50];
+        temp->name = new char[50];
 
-            temp->addr = new char[50];
-            temp->name = new char[50];
-            char numToExtract[100];
 
-            fin.get(temp->name,49,'|');//1
-            fin.ignore(100,'|');
+        fin.get(temp->addr,49,'|');//1
+        fin.ignore(100,'|');
 
-            fin.get(temp->addr,49,'|');//2
-            fin.ignore(100,'|');
+        fin.get(temp->name,49,'|');//2
+        fin.ignore(100,'|');
 
-            fin.get(numToExtract,15,'|');//3
-            fin.ignore(100,'|');
-            temp->phon = numExtract(numToExtract);
-
-            fin.get(numToExtract,15,'|');//4
-            fin.ignore(100,'|');
-            temp->acct = numExtract(numToExtract);
-
-            fin.get(numToExtract,15,'|');//5
-            fin.ignore(100,'|');
-            temp->lastDate = numExtract(numToExtract);
-
-            fin.get(numToExtract,15,'|');//6 float
-            temp->currDue = numExtract(numToExtract)/100;
-            fin.ignore(100,'|');
-
-            fin.get(numToExtract,15,'|');//7 float
-            temp->lastPay = numExtract(numToExtract)/100;
-
-            myTable->addComp(temp);
-            temp->disp();
-            temp = NULL;
-            ++flag;
-        }
+        fin >> temp->acct;//3
+        fin.ignore(100,'|');
+        fin >> temp->phon;//4
+        fin.ignore(100,'|');
+        fin >> temp->lastDate;//5
+        fin.ignore(100,'|');
+        fin >> temp->currDue;//6
+        fin.ignore(100,'|');
+        fin >> temp->lastPay;//7
+        fin.ignore(100,'\n');
+        //cerr << "\nTemp.disp\n";
+        //temp->disp();
+        count += myTable->addComp(temp);
+        temp = NULL;
     }
     delete temp;
     fin.close();
-    return flag;
+    return count;
 }
 void client::dispAll(){
-    myTable->dispAll();
+    if(myTable->isEmpty()) cout << "\nTable is totally empty, fuck\n";
+    cout << "\n# of bills: " << myTable->dispAll();
 }
-
-
-
+void client::pay(){
+    char term[50];
+    float paym = 0; 
+    cout << "\n------->>Please enter the EXACT name of the company you would like to make a payment on: ";
+    cin.get(term,49,'\n');
+    cin.ignore(50,'\n');
+    cout <<"\nEnter the amount to be paid: ";
+    cin >> paym;
+    myTable->pay(term,paym);
+}
 
 

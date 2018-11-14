@@ -2,7 +2,6 @@
 #include <cstring>
 
 company::company(){
-    cerr << "\nAyyy i'm creatin heeeere\n";
     next = NULL;
     name = NULL;
     addr = NULL;
@@ -48,6 +47,7 @@ char * company::getName(company * temp){
 }
 int company::disp(){
    //temp disp, need to switch to write to fed in  
+   
     cerr 
         << "\n==========="
         << "\nName: "<< name
@@ -56,7 +56,8 @@ int company::disp(){
         << "\nLastDate: " << lastDate
         << "\nLastPay: " << lastPay
         << "\nCurrDue: " << currDue
-        << "===========\n";
+        << "\nPaid: " << paid
+        << "\n===========\n";
    return 0;
 }
 /*
