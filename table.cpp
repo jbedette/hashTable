@@ -8,14 +8,36 @@ table::table(){
     companies = NULL;
     size = 0;
 }
+//both seem to work the same
 table::~table(){
-    /*
+    int count = 0;
     for(int i = 0; i < size; ++i){
-        delete companies[i];
+        if(companies[i]){
+            cerr << "\nRecDest: ";
+            count += recDest(companies[i]);
+        }
     }
-    */
+    cerr << "\n#destroyed: " << count;
     delete companies;
 }
+int table::recDest(company * & head){
+    if(!head) return 0;
+    int flag = 0;
+    if(head->next)flag+= recDest(head->next);
+    delete head;
+    ++flag;
+    return flag;
+}
+/*
+table::~table(){
+    for(int i = 0; i < size; ++i){
+        if(companies[i]){
+            delete companies[i];
+        }
+    }
+    delete companies;
+}
+*/
 //need to make companies values NULL
 int table::init(int tblSize){
     if(!tblSize)return 0;
@@ -120,9 +142,9 @@ int table::recDel(company * & head, company * & prev,char term[]){
     int flag = 0;
     if(!strcmp(head->name,term)){
         //ll is being broken/changes not saved
-        cerr << "\nprev->n: " << prev->next->name;
+        cerr << "\nprev->n: " << prev->next;
         prev->next = head->next;
-        cerr << "\nprev->n: " << prev->next->name;
+        cerr << "\nprev->n: " << prev->next;
         delete head; 
         head = NULL;
         ++flag;

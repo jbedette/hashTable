@@ -21,6 +21,8 @@ so the array of companies is fucked
 11/14
     priority : - low = mid + high
     +find memory leaks
+        down to !deleting one thing at adding
+        not quite sure why it isn't deleting
     =make single disp show most recent
     =disp from company moved out of company class and into client
     -menu

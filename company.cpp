@@ -5,17 +5,18 @@ company::company(){
     next = NULL;
     name = NULL;
     addr = NULL;
+    lastDate = NULL;
     key = 0;
     phon = 0;
-    lastDate = 0;
     lastPay = 0;
     currDue = 0;
     paid = false;
 }
 company::~company(){
-    delete name;
-    delete addr;
-    delete lastDate;
+    cerr << "->dest:" << name;
+    if(name) delete name;
+    if(addr) delete addr;
+    if(lastDate) delete lastDate;
 }
 //addVal is probs unnecessary
 int company::addValue(company * toAdd){

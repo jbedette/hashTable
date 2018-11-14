@@ -51,6 +51,7 @@ class table{
         long int makeHash(char name[], int max);
         long int sortHash(long int hash, int arrLen);
     private:
+        int recDest(company * & head);
         int recAdd(company * & head, company * temp);
         bool recPay(company * & head, char term[], float paym);
         int recDel(company * & head, company * & prev, char term[]);
