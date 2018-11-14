@@ -2,14 +2,6 @@
 #include <cctype>
 #include <cstring>
 using namespace std;
-/* needed data:
- * mailing address,business, char
- * phone number,businees, int
- * account number, business, int
- * amount currently being paid, bill?
- * last payment amout, business
- * date of last payment, business
- */
 
 //made my company node a totally public class
 //struct is nice, but with all these assigned values
@@ -19,11 +11,8 @@ class company{
     public:
         company();
         ~company();
-        int addValue(company * toAdd);
         int disp(); 
-        char * getName(company * temp);
-        long int getKey();
-        //
+        int addValue(company * toAdd);
         company * next;
         long int key;
         char * name;//1

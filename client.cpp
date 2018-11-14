@@ -13,22 +13,33 @@ client::client(){
 client::~client(){
     delete myTable;
 }
-
-//file comes in at init
-//go through entire system, 
-//populate array
-//int client::init(char inpFile[]){
+//initialize table
+//get size to make table
+//feeds size into table
+//feeds data from ext file into 
+//table with populate
 int client::init(){
-    int flag = 0;
+    int count = 0;
     int tblSize = 1;
     cout << "\nHow Big do you want your table: ";
     cin >> tblSize;
     cin.clear();
     myTable = new table;
     myTable->init(tblSize);
-    cout << "\nNumber of items added: " << populate();
-    return flag;
+    count += populate();
+    cout << "\nNumber of items added: " << count;
+    return count;
 }
+//a real nasty function
+//reads data from ext file
+//feeds into a temp company
+//company is passed into the table
+//table ptrs are assigned to the temp
+//temp is assigned to null
+//then temp is made into a new temp company
+//the process repeats
+//indicates whether all ext file items are successfully
+//read in and returns total count
 int client::populate(){
     cerr << "\nclient.populate\n";
     company * temp;
@@ -60,32 +71,29 @@ int client::populate(){
         fin >> temp->lastPay;//7
         fin.ignore(100,'\n');
         
-        //cerr << "\nchar arrs b4 dyn set: " <<name<< ','<< addr<< ','<<lastDate;
         temp->addr = new char[strlen(addr)+1];
         temp->name = new char[strlen(name)+1];
         temp->lastDate = new char[strlen(lastDate) +1];
         strcpy(temp->name,name);
         strcpy(temp->addr,addr);
         strcpy(temp->lastDate,lastDate);
-       // cerr << "\nTemp disp: " << temp->disp();
 
         count += myTable->addComp(temp);
         temp = NULL;
     }
-    if(temp){
-        delete temp->name;
-        delete temp->addr;
-        delete temp->lastDate;
-        delete temp;
-    }
     fin.close();
+    if(!(count-index)) cout << "\nAll items succesfully added.";
     return count;
 }
+//essentially wrapper function for table display, checks first if table has been
+//filled properly
 void client::dispAll(){
     if(myTable->isEmpty()) cout << "\nTable is totally empty\n";
     int count = myTable->dispAll();
     cout << "\n# of bills: " << count;
 }
+//takes input from user to pass to pay functon
+//need payment float * search term
 void client::pay(){
     char term[50];
     float paym = 0; 
@@ -96,8 +104,15 @@ void client::pay(){
     cin.ignore(50,'\n');
     cout <<"\nEnter the amount to be paid: ";
     cin >> paym;
-    myTable->pay(term,paym);
+    if(myTable->pay(term,paym)){
+        cout << "\nPayment Successful";
+        myTable->disp(term);
+    }else{ 
+        cout << "\nError: payment failed";
+    }
 }
+//takes term to search for for deletion
+//displays success and failure 
 void client::del(){
     char term[50];
     cin.clear();
@@ -107,6 +122,10 @@ void client::del(){
     if(myTable->del(term)) cout << "\nCompany deleted";
     else cout << "\nDelete failed, did you enter the correct company name?";
 }
+//takes in a client defined company
+//passes to table
+//displays success/fail
+//sets temp to null
 void client::add(){
     cin.clear();
     cin.ignore(100,'\n');
@@ -149,10 +168,17 @@ void client::add(){
     strcpy(temp->name,name);
     strcpy(temp->addr,addr);
     strcpy(temp->lastDate,lastDate);
-    if(!myTable->addComp(temp))cout << "\nError: adding company failed";
-    myTable->disp(temp->name);
+    if(myTable->addComp(temp)){
+        cout << "\nCompany Added: ";
+        myTable->disp(term);
+    }
+    else cout << "\nError: adding company failed";
+
     temp = NULL; 
 }
+//takes search term from client
+//feeds to table
+//displays errors
 void client::disp(){
     char term[50];
     cin.clear();
@@ -163,7 +189,7 @@ void client::disp(){
     cin.ignore(100,'\n');
     if(!myTable->disp(term)) cout << "\nCompany not found";
 }
-
+//calls itself thru tail recursion if e is not inputted
 void client::menu(){
     char opt = ' ';
     cin.clear();
@@ -188,6 +214,7 @@ void client::menu(){
         cout << "\nGoodbye";
         return;
     }
+    opt = ' ';//maybe this will solve double input
     return menu();
 }
 
