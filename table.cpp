@@ -1,5 +1,7 @@
 #include "table.h"
-#include <typeinfo>
+//John Bedette, cs163, p3
+//table controls all data flow & protects arr of company *'s
+
 
 
 //set companies ** to null and arr size to 0;
@@ -7,18 +9,27 @@ table::table(){
     companies = NULL;
     size = 0;
 }
-//both seem to work the same
+
+
+
+//delete companies from table
+//was running into memory leaks
+//so I built a recursive delete to really flush it
+//iterates over table arr based on size
+//rips it all out
 table::~table(){
     int count = 0;
     for(int i = 0; i < size; ++i){
         if(companies[i]){
-            cerr << "\nRecDest: ";
             count += recDest(companies[i]);
         }
     }
-    cerr << "\n#destroyed: " << count;
     delete companies;
 }
+
+
+
+//makes sure to call delete on each node of LLL
 int table::recDest(company * & head){
     if(!head) return 0;
     int flag = 0;
@@ -27,16 +38,9 @@ int table::recDest(company * & head){
     ++flag;
     return flag;
 }
-/*
-table::~table(){
-    for(int i = 0; i < size; ++i){
-        if(companies[i]){
-            delete companies[i];
-        }
-    }
-    delete companies;
-}
-*/
+
+
+
 //initializes companies **
 //takes in table size, sets private member size to inputted size
 //then goes through the new company * array and sets each head to null
@@ -50,6 +54,9 @@ int table::init(int tblSize){
     }
     return flag;
 }
+
+
+
 //this is a testing function, if display all fires
 //and everything is still null
 //this will return a true
@@ -60,6 +67,9 @@ bool table::isEmpty(){
     }
     return (notNull) ? false : true;
 }
+
+
+
 //this takes a temp company node created in client
 //and finds where it should be sorted based on hash
 //goes to that address (companies + post hash sorting)
@@ -85,6 +95,9 @@ int table::addComp(company * temp){
     }
     return count;
 }
+
+
+
 //checks if head is taken
 //if it is, immediately moves on, incrementing count in wrapper by 1
 //if it isn't, head is assigned to temp and count is incremented by 10,000
@@ -95,11 +108,17 @@ int table::recAdd(company * & head, company * temp){
     head = temp;
    return 10000;
 }
+
+
+
 //pay is a wrapper func for the recursive search
 //passes search term and payment amout to the recursive pay 
 bool table::pay(char term[],float paym){
     return recPay(companies[sortHash(makeHash(term,size),size)],term, paym);
 }
+
+
+
 //checks for !strcmp (strcmp returns 0, so !0 = true)
 //if it pops, bool success is set to true
 //currentDue has payment subtracted from it
@@ -127,6 +146,9 @@ int table::dispAll(){
     }
     return count;
 }
+
+
+
 //recurses through the whole hass table
 //calling company->disp on each node
 //for each node that exists it increments 
@@ -136,6 +158,10 @@ int table::recDispAll(company * head){
     head->disp();
     return recDispAll(head->next) + 1;
 }
+
+
+
+
 //takes in a search term
 //sorts it and checks if that hash has been made
 //if it has, it begins recursing 
@@ -147,6 +173,9 @@ bool table::disp(char term[]){
    succ += recDisp(companies[i],term);
    return (succ) ? true : false;
 }
+
+
+
 //if !head, it instantly exits func
 //then it checks for match, if match is found it
 //return company->disp which has a value of 1;
@@ -156,6 +185,9 @@ int table::recDisp(company * head,char term[]){
     if(!strcmp(head->name, term))return head->disp();
     else return recDisp(head->next,term) + 0;
 }
+
+
+
 int table::del(char term[]){
     int i = sortHash(makeHash(term,size),size);
     company * head = companies[i];
@@ -166,22 +198,19 @@ int table::del(char term[]){
         return 1;
     }
     int succ = 0;
-    succ += recDel(companies[i]->next,companies[i],term);
+    succ += recDel(companies[i],term);
     return succ;
 }
-int table::recDel(company * & head, company * & prev,char term[]){
+int table::recDel(company * & head, char term[]){
     if(!head) return 0; 
     int flag = 0;
     if(!strcmp(head->name,term)){
-        //ll is being broken/changes not saved
-        cerr << "\nprev->n: " << prev->next;
-        prev->next = head->next;
-        cerr << "\nprev->n: " << prev->next;
+        company * temp = head->next;
         delete head; 
-        head = NULL;
+        head = temp;
         ++flag;
     }else{
-        recDel(head->next,head,term);
+        return recDel(head->next,term) +flag;
     }
     return flag;
 }
@@ -208,6 +237,8 @@ long int table::makeHash(char name[], int max){
     hash *= 7;//arbitrary prime
     return hash / max; //make sure it's within arr bounds
 }; 
+
+
 
 //will output an index number given a hash
 long int table::sortHash(long int hash, int arrLen){

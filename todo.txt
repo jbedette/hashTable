@@ -20,21 +20,9 @@ so the array of companies is fucked
 
 11/14
     priority : - low = mid + high
-    ++del isn't working
-        resetting of ->next isn't working
-    +find memory leaks
-        delsingle is causing leaks, not deleting correctly
-    +comment
-        summary at top of each
-        name + cs163 p3
-        comment head file
-    +need to test add single 
     =make destructor cleaner
     =make single disp show most recent
-    =disp from company moved out of company class and into client
     =using every return
-    -menu
-        why do i need to enter values twice?
     -keep all funcs under 30
     -only use #include where needed
     -errors don't really work
@@ -46,3 +34,5 @@ eff notes
     could make search
     could combine populate/single add
     menu requires double input 
+    assigning hash key is kinda unnessesscary
+    

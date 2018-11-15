@@ -1,7 +1,11 @@
 #include "table.h"
-#include <fstream> //probably goes here
+#include <fstream>
+//John Bedette, cs163, p3
+//client interacts with the user and ext files
 
 
+
+//initializes table
 client::client(){
     myTable = NULL;
     temp = NULL; 
@@ -9,10 +13,13 @@ client::client(){
 }
 
 
-
+//starts delete chain
 client::~client(){
     delete myTable;
 }
+
+
+
 //initialize table
 //get size to make table
 //feeds size into table
@@ -24,12 +31,17 @@ int client::init(){
     cout << "\nHow Big do you want your table: ";
     cin >> tblSize;
     cin.clear();
+    cin.ignore(100,'\n');
     myTable = new table;
     myTable->init(tblSize);
     count += populate();
-    cout << "\nNumber of items added: " << count;
+    cout << "\nNumber of items added: " << (count+1)%10000;
     return count;
 }
+
+
+
+
 //a real nasty function
 //reads data from ext file
 //feeds into a temp company
@@ -41,7 +53,6 @@ int client::init(){
 //indicates whether all ext file items are successfully
 //read in and returns total count
 int client::populate(){
-    cerr << "\nclient.populate\n";
     company * temp;
     int count = 0;
     ifstream fin;
@@ -85,6 +96,9 @@ int client::populate(){
     if(!(count-index)) cout << "\nAll items succesfully added.";
     return count;
 }
+
+
+
 //essentially wrapper function for table display, checks first if table has been
 //filled properly
 void client::dispAll(){
@@ -92,13 +106,14 @@ void client::dispAll(){
     int count = myTable->dispAll();
     cout << "\n# of bills: " << count;
 }
+
+
+
 //takes input from user to pass to pay functon
 //need payment float * search term
 void client::pay(){
     char term[50];
     float paym = 0; 
-    cin.clear();
-    cin.ignore(100,'\n');
     cout << "\nPlease enter the EXACT name of the company you would like to make a payment on: ";
     cin.get(term,49,'\n');
     cin.ignore(50,'\n');
@@ -111,24 +126,27 @@ void client::pay(){
         cout << "\nError: payment failed";
     }
 }
+
+
+
 //takes term to search for for deletion
 //displays success and failure 
 void client::del(){
     char term[50];
-    cin.clear();
-    cin.ignore(100,'\n');
     cout << "\nEnter company to delete: ";
     cin.get(term,49,'\n');
     if(myTable->del(term)) cout << "\nCompany deleted";
     else cout << "\nDelete failed, did you enter the correct company name?";
 }
+
+
+
 //takes in a client defined company
 //passes to table
 //displays success/fail
 //sets temp to null
 void client::add(){
-    cin.clear();
-    cin.ignore(100,'\n');
+    //possibly get rid of
     company * temp = new company;
     char name[50];
     char addr[50];
@@ -170,52 +188,51 @@ void client::add(){
     strcpy(temp->lastDate,lastDate);
     if(myTable->addComp(temp)){
         cout << "\nCompany Added: ";
-        myTable->disp(term);
+        myTable->disp(name);
     }
     else cout << "\nError: adding company failed";
-
     temp = NULL; 
 }
+
+
+
 //takes search term from client
 //feeds to table
 //displays errors
 void client::disp(){
     char term[50];
-    cin.clear();
-    cin.ignore(100,'\n');
     cout << "\nCompany to display: ";
     cin.get(term,49,'\n');
     cin.clear();
     cin.ignore(100,'\n');
     if(!myTable->disp(term)) cout << "\nCompany not found";
 }
+
+
+
 //calls itself thru tail recursion if e is not inputted
 void client::menu(){
     char opt = ' ';
-    cin.clear();
-    cin.ignore(100,'\n');
-    cout << "\nWelcome to my hash table, would you like to: ";
-    cout << "\n--[D[isplay all bills?";
-    cout << "\n--[S]ee only one bill?";
-    cout << "\n--[A]dd a new bill?";
-    cout << "\n--[P]ay a bill?";
-    cout << "\n--[R]emove a bill?";
-    cout << "\n--[E]xit?\n";
-    cin >> opt;
-    cin.clear();
-    cin.ignore(100,'\n');
-    opt = tolower(opt);
-    if(opt ==  'd')dispAll();
-    if(opt == 's')disp();
-    if(opt == 'a')add();
-    if(opt == 'p')pay();
-    if(opt == 'r')del();
-    if(opt == 'e'){
-        cout << "\nGoodbye";
-        return;
+    while(opt != 'e'){
+        opt = ' ';
+        cout << "\nWelcome to my hash table, would you like to: ";
+        cout << "\n--[D]isplay all bills?";
+        cout << "\n--[S]ee only one bill?";
+        cout << "\n--[A]dd a new bill?";
+        cout << "\n--[P]ay a bill?";
+        cout << "\n--[R]emove a bill?";
+        cout << "\n--[E]xit?\n";
+        cin >> opt;
+        cin.clear();
+        cin.ignore(100,'\n');
+        opt = tolower(opt);
+        if(opt == 'd')dispAll();
+        if(opt == 's')disp();
+        if(opt == 'a')add();
+        if(opt == 'p')pay();
+        if(opt == 'r')del();
     }
-    opt = ' ';//maybe this will solve double input
-    return menu();
+    cout << "\nGoodbye";
 }
 
 
